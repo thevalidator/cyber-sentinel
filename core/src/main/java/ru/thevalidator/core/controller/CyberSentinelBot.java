@@ -5,6 +5,8 @@
 package ru.thevalidator.core.controller;
 
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -18,6 +20,7 @@ public class CyberSentinelBot extends TelegramLongPollingBot {
     
     @Value("${bot.name}")
     private String botName;
+    private static final Logger logger = LogManager.getLogger(CyberSentinelBot.class);
 
     public CyberSentinelBot(@Value("${bot.token}") String botToken) {
         super(botToken);
@@ -26,6 +29,7 @@ public class CyberSentinelBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         System.out.println(">> " + botName + " - " + update.getMessage().getText());
+        logger.trace("<< " + update.getMessage().getText());
     }
 
 //    @Override
