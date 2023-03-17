@@ -6,7 +6,7 @@
                 pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
         </Console>
 
-<!--        <RollingFile name="RollingFile"
+        <RollingFile name="RollingFile"
             fileName="./logs/spring-boot-logger-log4j2.log"
             filePattern="./logs/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
             <PatternLayout>
@@ -20,7 +20,7 @@
                     size="10 MB" />
                 <TimeBasedTriggeringPolicy />
             </Policies>
-        </RollingFile>-->
+        </RollingFile>
     </Appenders>
 
     <Loggers>
@@ -32,6 +32,7 @@
 
         <Logger name="ru.thevalidator.core.controller" level="trace" additivity="false">
             <AppenderRef ref="Console" />
+            <!--<AppenderRef ref="RollingFile" />-->
         </Logger>
     </Loggers>
 
