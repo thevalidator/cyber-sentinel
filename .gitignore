@@ -26,3 +26,4 @@ replay_pid*
 core/src/main/resources/application.properties
 *.gz
 core/nbactions.xml
+/communicator/target/
