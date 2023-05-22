@@ -27,3 +27,4 @@ core/src/main/resources/application.properties
 *.gz
 core/nbactions.xml
 /communicator/target/
+core/nb-configuration.xml
