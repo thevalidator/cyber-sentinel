@@ -20,24 +20,24 @@
         <exec.mainClass>ru.thevalidator.core.Core</exec.mainClass>
     </properties>
     
-<!--    <dependencyManagement>
+    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2022.0.2</version>
+                <version>2021.0.7</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
-    </dependencyManagement>-->
+    </dependencyManagement>
     
     <dependencies>
-<!--        <dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>3.1.7</version>
-        </dependency>-->
+            <!--<version>4.0.3</version>-->
+        </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-spring-boot-starter</artifactId>
