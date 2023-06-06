@@ -5,6 +5,7 @@
 package ru.thevalidator.core.service.bot;
 
 import java.io.Serializable;
+import java.util.List;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -13,6 +14,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  */
 public interface BotService {
     
-    BotApiMethod<? extends Serializable> handleUpdate(Update update);
+    List<BotApiMethod<? extends Serializable>> getResponse(Update update);
 
 }

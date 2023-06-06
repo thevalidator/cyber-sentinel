@@ -3,6 +3,7 @@
  */
 package ru.thevalidator.core.bot;
 
+import java.io.Serializable;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -25,14 +27,13 @@ import ru.thevalidator.core.util.ExceptionUtil;
  */
 @Component
 public class CyberSentinelBot extends TelegramLongPollingBot {
-    
+
     private static final Logger logger = LogManager.getLogger(CyberSentinelBot.class);
 
     @Value("${bot.name}")
     private String botName;
-    
+
     private final BotService botService;
-    
 
     @Autowired
     public CyberSentinelBot(@Value("${bot.token}") String botToken, BotService botService) {
@@ -42,52 +43,16 @@ public class CyberSentinelBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        
-        var response = botService.handleUpdate(update);
-        try {
-            execute(response);
-        } catch (TelegramApiException e) {
-            logger.error(ExceptionUtil.getFormattedDescription(e));
-        }
-        
-//        if (update.hasMessage() && update.getMessage().hasText()) {
-//
-//            Message message = update.getMessage();
-//
-//            String text = message.getText();
-//            String chatId = String.valueOf(message.getChatId());
-//            
-//            SendMessage msg = null;
-//            if (text.equalsIgnoreCase("id")) {
-//                String botResponseText;
-//                if (message.isReply()) {
-//                    message = message.getReplyToMessage();
-//                }
-//                var userId = message.getFrom().getId();
-//                var userName = message.getFrom().getUserName();
-//                var userFirstName = message.getFrom().getFirstName();
-//                var userLastName = message.getFrom().getLastName();
-//                var userLang = message.getFrom().getLanguageCode();
-//                botResponseText = String.format("id: %d\nusername: %s\nfirst name: %s\nlast name: %s\nlang: %s",
-//                        userId, userName, userFirstName, userLastName, userLang);
-//                msg = new SendMessage(chatId, botResponseText);
-//            } else if (text.equalsIgnoreCase("юфуфус")) {
-//                msg = new SendMessage(chatId, "Эй, Политолог, расскажи нам новости!");
-//            } else if (text.equalsIgnoreCase("чуйбараш")) {
-//                msg = new SendMessage(chatId, "Чуй, куда дел черного, падла?");
-//            }
-//
-//            if (msg != null) {
-//                try {
-//                    execute(msg);
-//                    //execute(emsg);
-//                } catch (TelegramApiException ex) {
-//                    logger.error(ex.getMessage());
-//                }
-//            }
-//
-//        }
 
+        var response = botService.getResponse(update);
+        
+        if (response != null && !response.isEmpty()) {
+            try {
+                executeAll(response);
+            } catch (TelegramApiException e) {
+                logger.error(ExceptionUtil.getFormattedDescription(e));
+            }
+        }
 
 ////        System.out.println(">> " + botName + " - " + update.getMessage().getText());
 ////        String chatId = String.valueOf(update.getMessage().getChatId());
@@ -117,6 +82,12 @@ public class CyberSentinelBot extends TelegramLongPollingBot {
     @Override
     public String getBotUsername() {
         return botName;
+    }
+
+    private void executeAll(List<BotApiMethod<? extends Serializable>> response) throws TelegramApiException {
+        for (BotApiMethod<? extends Serializable> m: response) {
+            execute(m);
+        }
     }
 
 }
