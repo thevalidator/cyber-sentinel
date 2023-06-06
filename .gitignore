@@ -28,3 +28,5 @@ core/src/main/resources/application.properties
 core/nbactions.xml
 /communicator/target/
 core/nb-configuration.xml
+core/censor.dict
+core/tmp/плохие слова.docx
