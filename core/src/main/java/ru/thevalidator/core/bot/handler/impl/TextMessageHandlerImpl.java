@@ -6,6 +6,7 @@ package ru.thevalidator.core.bot.handler.impl;
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -15,15 +16,19 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 import static ru.thevalidator.core.bot.command.Command.*;
 import ru.thevalidator.core.bot.handler.TextMessageHandler;
+import ru.thevalidator.core.service.api.RootApi;
 import ru.thevalidator.core.service.censor.TextCensorFilterService;
 
 @Component
 public class TextMessageHandlerImpl implements TextMessageHandler {
 
     private final TextCensorFilterService filterService;
+    private final RootApi apiService;
 
-    public TextMessageHandlerImpl(TextCensorFilterService filterService) {
+    @Autowired
+    public TextMessageHandlerImpl(TextCensorFilterService filterService, RootApi apiService) {
         this.filterService = filterService;
+        this.apiService = apiService;
     }
 
     @Override
@@ -31,7 +36,8 @@ public class TextMessageHandlerImpl implements TextMessageHandler {
 
         String text = message.getText();
         String chatId = String.valueOf(message.getChatId());
-
+        
+        //System.out.println(">>>> " + text);
         SendMessage messageResponse = null;
         if (text.equalsIgnoreCase(ID.getName())) {
             String botResponseText;
@@ -47,13 +53,17 @@ public class TextMessageHandlerImpl implements TextMessageHandler {
                     userId, userName, userFirstName, userLastName, userLang);
             messageResponse = new SendMessage(chatId, botResponseText);
         } else if (text.startsWith(IP.getName())) {
-            messageResponse = new SendMessage(chatId, "Unsupported yet");
+            String ipAdress = text.substring(3).trim();
+            String result = ipAdress.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}") 
+                    ? apiService.getIPGeoLocationData(ipAdress).toString()
+                    : "Некорректно введен ip адрес";
+            messageResponse = new SendMessage(chatId, result);
         } else if (text.equalsIgnoreCase("юфуфус")) {
             messageResponse = new SendMessage(chatId, "Эй, Политолог, расскажи нам новости!");
         } else if (text.equalsIgnoreCase("чуйбараш")) {
             messageResponse = new SendMessage(chatId, "Чуй, куда дел черного, падла?");
         } else if (text.equalsIgnoreCase(HELPME.getName())) {
-            File file = new File("test.file");
+            File file = new File("/test.file");
             messageResponse = new SendMessage(chatId, file.getAbsoluteFile().toString());
             //messageResponse = new SendMessage(chatId, "Unsupported yet");
         } else {
@@ -63,7 +73,7 @@ public class TextMessageHandlerImpl implements TextMessageHandler {
                 String description = String.format("<code>Оригинальное сообщение от %s %s содержало бранные слова и было изменено:</code>\n\n",
                         user.getFirstName(),
                         user.getLastName() == null ? "" : user.getLastName());
-                messageResponse = new SendMessage(chatId, description + "<i>/\"" + censorFilteredMessage + "\"</i>");
+                messageResponse = new SendMessage(chatId, description + "<i>\"" + censorFilteredMessage + "\"</i>");
                 messageResponse.setParseMode(ParseMode.HTML);
                 DeleteMessage deleteMessageResponse = new DeleteMessage(chatId, message.getMessageId());
                 response.add(deleteMessageResponse);
