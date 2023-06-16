@@ -61,14 +61,15 @@ public class GeoLocationResponseDTO {
 
     @Override
     public String toString() {
-        return "ip_address=" + ipAddress 
-                + ",\ncity=" + city 
-                + ",\nregion=" + region 
-                + ",\ncountry=" + country 
-                + ",\nconnection_type=" + connection.getConnectionType()
-                + ",\nautonomous_system_organization=" + connection.getAutonomousSystemOrganization()
-                + ",\nisp_name=" + connection.getIspName()
-                + ",\norganization_name=" + connection.getOrganizationName();
+        return "[IP]=" + ipAddress 
+                + ",\n[CITY]=" + city 
+                + ",\n[REGION]=" + region 
+                + ",\n[COUNTRY]=" + country 
+                + ",\n[CONNECTION TYPE]=" + connection.getConnectionType()
+                + ",\n[ISP]=" + connection.getIspName()
+                + ",\n[ORGANIZATION]=" + connection.getOrganizationName()
+                + ",\n[AUTONOMOUS SYSTEM ORGANIZATION]=" + connection.getAutonomousSystemOrganization()
+                ;
     }
 
 }
