@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.thevalidator.core.service.censor.TextCensorFilterService;
 import ru.thevalidator.core.util.ExceptionUtil;
@@ -20,10 +21,11 @@ public class TextCensorFilterImpl implements TextCensorFilterService {
 
     private static final Logger logger = LogManager.getLogger(TextCensorFilterImpl.class);
     private Set<String> swearWordsDictionary;
-
-    public TextCensorFilterImpl() {
+    
+    public TextCensorFilterImpl(@Value("${words.dict.path}") String path) {
         this.swearWordsDictionary = new HashSet<>();
-        try (Reader reader = new FileReader("censor.dict", Charset.forName("UTF-8")); BufferedReader br = new BufferedReader(reader)) {
+        try (Reader reader = new FileReader(path,
+                Charset.forName("UTF-8")); BufferedReader br = new BufferedReader(reader)) {
             String line;
             while ((line = br.readLine()) != null && !line.isBlank()) {
                 swearWordsDictionary.add(line);
