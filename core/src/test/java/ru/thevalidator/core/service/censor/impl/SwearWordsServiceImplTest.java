@@ -93,6 +93,15 @@ public class SwearWordsServiceImplTest {
         
         filtered = service.getAllWordsFilteredByCategory(1);
         assertEquals(4, filtered.size());
+    }
+    
+    @Test
+    public void testGetAllWordsFilteredByCategoryWithEmptyDB() {
+        System.out.println("get all words filtered by category with empty DB");
+        
+        List<String> filtered = service.getAllWordsFilteredByCategory(1);
+        assertNotNull(filtered);
+        assertEquals(0, filtered.size());
         
     }
     
