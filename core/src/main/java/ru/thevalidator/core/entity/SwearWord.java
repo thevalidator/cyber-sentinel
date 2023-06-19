@@ -22,11 +22,16 @@ public class SwearWord implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "text_value")
+    @Column(name = "text_value", unique = true, nullable = false, length = 50)
     private String textValue;
     private int category;
 
     public SwearWord() {
+    }
+
+    public SwearWord(String textValue, int category) {
+        this.textValue = textValue;
+        this.category = category;
     }
 
     public int getId() {
@@ -83,5 +88,5 @@ public class SwearWord implements Serializable {
     public String toString() {
         return "SwearWord{" + "id=" + id + ", textValue=" + textValue + ", category=" + category + '}';
     }
-    
+
 }
