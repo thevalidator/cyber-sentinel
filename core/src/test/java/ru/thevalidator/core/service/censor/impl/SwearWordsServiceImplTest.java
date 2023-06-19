@@ -29,6 +29,9 @@ public class SwearWordsServiceImplTest {
     @Qualifier("swearwordsserviceimpl")
     private SwearWordsService service;
     
+    @Autowired
+    private SwearWordsRepository repository;
+    
     public SwearWordsServiceImplTest() {
     }
     
@@ -56,7 +59,8 @@ public class SwearWordsServiceImplTest {
         word.setCategory(1);
         word.setTextValue("some_very_bad_word");
         service.save(word);
-        SwearWord wordFromDB = service.getById(1);
+        var words = repository.findAll();
+        SwearWord wordFromDB = words.get(0);
         
         assertEquals(word.getTextValue(), wordFromDB.getTextValue());
         assertEquals(word.getCategory(), wordFromDB.getCategory());
