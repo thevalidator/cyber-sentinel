@@ -7,6 +7,7 @@ package ru.thevalidator.core.service.censor.impl;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.thevalidator.core.entity.SwearWord;
 import ru.thevalidator.core.repository.SwearWordsRepository;
@@ -14,6 +15,7 @@ import ru.thevalidator.core.service.censor.SwearWordsService;
 
 @Service
 @Transactional
+@Qualifier("swearwordsserviceimpl")
 public class SwearWordsServiceImpl implements SwearWordsService {
     
     private final SwearWordsRepository repository;
@@ -41,6 +43,16 @@ public class SwearWordsServiceImpl implements SwearWordsService {
     @Override
     public List<String> getAllWordsFilteredByCategory(int category) {
         return repository.findAllWordsByCategory(category);
+    }
+
+    @Override
+    public int getFilterCategory() {
+        return repository.findFilterCategory();
+    }
+
+    @Override
+    public void setFilterCategory(int category) {
+        repository.saveFilterCategory(category);
     }
 
 }

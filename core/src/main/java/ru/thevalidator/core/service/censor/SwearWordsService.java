@@ -18,5 +18,9 @@ public interface SwearWordsService {
     void save(SwearWord word);
 
     void saveAll(List<SwearWord> words);
+
+    int getFilterCategory();
+    
+    void setFilterCategory(int category);
     
 }
