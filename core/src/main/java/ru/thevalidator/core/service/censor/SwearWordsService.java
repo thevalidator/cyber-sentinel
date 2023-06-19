@@ -19,7 +19,7 @@ public interface SwearWordsService {
 
     void saveAll(List<SwearWord> words);
 
-    int getFilterCategory();
+    Integer getFilterCategory();
     
     void setFilterCategory(int category);
     
