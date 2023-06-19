@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 import static ru.thevalidator.core.bot.command.Command.*;
 import ru.thevalidator.core.bot.handler.TextMessageHandler;
+import ru.thevalidator.core.entity.SwearWord;
 import ru.thevalidator.core.service.api.RootApi;
 import ru.thevalidator.core.service.censor.TextCensorFilterService;
 
@@ -45,8 +46,37 @@ public class TextMessageHandlerImpl implements TextMessageHandler {
         //System.out.println(">>>> " + text);
         //System.out.println(">>>> " + message.toString());
         SendMessage messageResponse = null;
-        if (text.startsWith("/") && String.valueOf(message.getFrom().getId()).equals(adminId)) {
-            messageResponse = new SendMessage(chatId, "Unsupported yet");
+        if (text.startsWith("/")) {
+            String botResponseText = null;
+            boolean isReply = false;
+            if (String.valueOf(message.getFrom().getId()).equals(adminId)) {
+                try {
+                    if (text.startsWith(ADD_SWEAR.getName())) {
+                        Integer swearCategory = Integer.valueOf(text.substring(5, 6));
+                        String swearText = text.substring(7);
+                        SwearWord word = new SwearWord(swearText, swearCategory);
+                        filterService.addWordToFilter(word);
+                        botResponseText = "Новое слово было успешно добавлено";
+                    } else if (text.startsWith(SET_CATEGORY.getName())) {
+                        Integer swearCategory = Integer.valueOf(text.substring(8, 9));
+                        filterService.setFilterCategory(swearCategory);
+                        botResponseText = "Установлена " + swearCategory + " категория фильтрации";
+                    } else if (text.startsWith(GET_CATEGORY.getName())) {
+                        botResponseText = "Категория фильтрации: " + filterService.getFilterCategory();
+                    } else {
+                        botResponseText = "Unsupported yet";
+                    }
+                } catch (Exception e) {
+                    botResponseText = "Error parsing command, wrong format";
+                }
+            } else {
+                botResponseText = "Сасай, ты не мой создатель";
+                isReply = true;
+            }
+            messageResponse = new SendMessage(chatId, botResponseText);
+            if (isReply) {
+                messageResponse.setReplyToMessageId(message.getMessageId());
+            }
         } else if (text.equalsIgnoreCase(ID.getName())) {
             String botResponseText;
             if (message.isReply()) {
@@ -56,7 +86,7 @@ public class TextMessageHandlerImpl implements TextMessageHandler {
             User forwardedUser = message.getForwardFrom();
             botResponseText = generateResponseMessageText(user, forwardedUser);
             messageResponse = new SendMessage(chatId, botResponseText);
-        }else if (text.startsWith(IP.getName())) {
+        } else if (text.startsWith(IP.getName())) {
             String ipAdress = text.substring(3).trim();
             String result = ipAdress.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
                     ? apiService.getIPGeoLocationData(ipAdress).toString()
@@ -106,7 +136,7 @@ public class TextMessageHandlerImpl implements TextMessageHandler {
         var userLastName = user.getLastName();
         var userLang = user.getLanguageCode();
         return String.format("id: %d\nusername: %s\nfirst name: %s\nlast name: %s\nlang: %s",
-                    userId, userName, userFirstName, userLastName, userLang);
+                userId, userName, userFirstName, userLastName, userLang);
     }
 
 }
