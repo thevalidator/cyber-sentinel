@@ -46,7 +46,7 @@ public class SwearWordsServiceImpl implements SwearWordsService {
     }
 
     @Override
-    public int getFilterCategory() {
+    public Integer getFilterCategory() {
         return repository.findFilterCategory();
     }
 
