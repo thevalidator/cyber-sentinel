@@ -71,6 +71,11 @@ public class TextCensorFilterServiceImpl implements TextCensorFilterService {
         updateWords();
     }
 
+    @Override
+    public Integer getFilterCategory() {
+        return swearWordService.getFilterCategory();
+    }
+
     private String checkAndFilterWord(String word) {
         if (swearWordsDictionary.contains(word.toLowerCase())) {
             StringBuilder sb = new StringBuilder(word.length());
