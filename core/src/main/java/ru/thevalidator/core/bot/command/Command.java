@@ -11,6 +11,9 @@ public enum Command {
     
     ID("id"),
     HELPME("helpme"),
+    ADD_SWEAR("/add"),
+    SET_CATEGORY("/setcat"),
+    GET_CATEGORY("/getcat"),
     IP("ip:");
     
     private final String name;
