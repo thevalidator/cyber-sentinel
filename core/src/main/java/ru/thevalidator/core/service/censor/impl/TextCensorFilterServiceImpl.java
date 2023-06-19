@@ -3,36 +3,30 @@
  */
 package ru.thevalidator.core.service.censor.impl;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.thevalidator.core.entity.SwearWord;
+import ru.thevalidator.core.service.censor.SwearWordsService;
 import ru.thevalidator.core.service.censor.TextCensorFilterService;
-import ru.thevalidator.core.util.ExceptionUtil;
 
 @Service
-public class TextCensorFilterImpl implements TextCensorFilterService {
+@Qualifier("textcensorfilterserviceimpl")
+public class TextCensorFilterServiceImpl implements TextCensorFilterService {
 
-    private static final Logger logger = LogManager.getLogger(TextCensorFilterImpl.class);
-    private Set<String> swearWordsDictionary;
-    
-    public TextCensorFilterImpl(@Value("${words.dict.path}") String path) {
+    private static final Logger LOGGER = LogManager.getLogger(TextCensorFilterServiceImpl.class);
+    private final SwearWordsService swearWordService;
+    private final Set<String> swearWordsDictionary;
+
+    @Autowired
+    public TextCensorFilterServiceImpl(SwearWordsService swearWordService) {
+        this.swearWordService = swearWordService;
         this.swearWordsDictionary = new HashSet<>();
-        try (Reader reader = new FileReader(path,
-                Charset.forName("UTF-8")); BufferedReader br = new BufferedReader(reader)) {
-            String line;
-            while ((line = br.readLine()) != null && !line.isBlank()) {
-                swearWordsDictionary.add(line);
-            }
-        } catch (Exception e) {
-            logger.error(ExceptionUtil.getFormattedDescription(e));
-        }
     }
 
     @Override
@@ -58,6 +52,24 @@ public class TextCensorFilterImpl implements TextCensorFilterService {
         String censored = censoredText.toString();
         return censored.equals(text) ? null : censored;
     }
+    
+    @Override
+    public void updateWords() {
+        swearWordsDictionary.clear();
+        postConstruct();
+    }
+
+    @Override
+    public void addWordToFilter(SwearWord word) {
+        swearWordService.save(word);
+        updateWords();
+    }
+
+    @Override
+    public void setFilterCategory(int category) {
+        swearWordService.setFilterCategory(category);
+        updateWords();
+    }
 
     private String checkAndFilterWord(String word) {
         if (swearWordsDictionary.contains(word.toLowerCase())) {
@@ -68,6 +80,13 @@ public class TextCensorFilterImpl implements TextCensorFilterService {
             return sb.toString();
         }
         return word;
+    }
+    
+    @PostConstruct
+    private void postConstruct() {
+        int category  = swearWordService.getFilterCategory();
+        var words = swearWordService.getAllWordsFilteredByCategory(category);
+        swearWordsDictionary.addAll(words);
     }
 
 }
