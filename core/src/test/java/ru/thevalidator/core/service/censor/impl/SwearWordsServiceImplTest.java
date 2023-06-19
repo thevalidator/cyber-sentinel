@@ -12,8 +12,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.thevalidator.core.entity.SwearWord;
+import ru.thevalidator.core.repository.SwearWordsRepository;
+import ru.thevalidator.core.service.censor.SwearWordsService;
 
 /**
  *
@@ -23,7 +26,8 @@ import ru.thevalidator.core.entity.SwearWord;
 public class SwearWordsServiceImplTest {
     
     @Autowired
-    private SwearWordsServiceImpl service;
+    @Qualifier("swearwordsserviceimpl")
+    private SwearWordsService service;
     
     public SwearWordsServiceImplTest() {
     }
@@ -37,7 +41,8 @@ public class SwearWordsServiceImplTest {
     }
     
     @BeforeEach
-    public void setUp() {
+    public void setUp(@Autowired SwearWordsRepository repository) {
+        repository.deleteAll();
     }
     
     @AfterEach
@@ -103,6 +108,23 @@ public class SwearWordsServiceImplTest {
         assertNotNull(filtered);
         assertEquals(0, filtered.size());
         
+    }
+    
+    @Test
+    public void testGetFilterCategory() {
+        System.out.println("get filter category");
+        
+        int category = service.getFilterCategory();
+        assertEquals(1, category);
+    }
+    
+    @Test
+    public void testSetFilterCategory() {
+        System.out.println("set filter category");
+        
+        service.setFilterCategory(1);
+        int category = service.getFilterCategory();
+        assertEquals(1, category);
     }
     
 }
