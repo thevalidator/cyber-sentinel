@@ -19,4 +19,6 @@ public interface TextCensorFilterService {
 
     void updateWords();
 
+    Integer getFilterCategory();
+
 }
