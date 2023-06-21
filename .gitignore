@@ -31,3 +31,4 @@ core/nb-configuration.xml
 core/censor.dict
 core/tmp/плохие слова.docx
 /core/nbproject/
+core/src/main/webapp/META-INF/context.xml
