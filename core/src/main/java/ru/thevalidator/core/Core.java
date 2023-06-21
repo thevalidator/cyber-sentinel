@@ -14,6 +14,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @author thevalidator <the.validator@yandex.ru>
  */
 @SpringBootApplication
+//@EnableFeignClients
 public class Core extends SpringBootServletInitializer {
 
     @Override
@@ -23,5 +24,6 @@ public class Core extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(Core.class);
-    }
+    }   
+    
 }
